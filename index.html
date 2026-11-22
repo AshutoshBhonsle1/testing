@@ -53,33 +53,33 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
 }
 .hdr-in {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px;
-  padding-top: 14px; padding-bottom: 14px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-top: 18px; padding-bottom: 18px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
 .name {
-  font-weight: 700; font-size: 17px; letter-spacing: 0.015em; line-height: 1;
-  padding: 8px 0;
+  font-weight: 700; font-size: 24px; letter-spacing: 0.015em; line-height: 1;
+  padding: 10px 0;
 }
 .nav { display: flex; align-items: center; gap: 2px; min-width: 0; }
 .nl {
-  position: relative; font-size: 13.5px; font-weight: 500; letter-spacing: 0.02em;
-  padding: 9px 11px; border-radius: 8px; opacity: 0.86;
+  position: relative; font-size: 16.5px; font-weight: 500; letter-spacing: 0.02em;
+  padding: 11px 14px; border-radius: 8px; opacity: 0.9;
   transition: opacity 0.2s ease, background-color 0.2s ease;
 }
 .nl::after {
-  content: ""; position: absolute; left: 11px; right: 11px; bottom: 5px; height: 1px; background: currentColor;
+  content: ""; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 1px; background: currentColor;
   transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
 }
 .nl:hover, .nl:focus-visible { opacity: 1; }
 .nl:hover::after, .nl:focus-visible::after { transform: scaleX(1); }
-.sep { width: 1px; height: 16px; background: currentColor; opacity: 0.25; margin: 0 8px; }
+.sep { width: 1px; height: 22px; background: currentColor; opacity: 0.25; margin: 0 8px; }
 .ib {
-  display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; opacity: 0.8;
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; opacity: 0.85;
   transition: opacity 0.2s ease, background-color 0.2s ease;
 }
 .ib:hover, .ib:focus-visible { opacity: 1; background: color-mix(in srgb, currentColor 12%, transparent); }
-.ico { width: 18px; height: 18px; fill: currentColor; display: block; }
+.ico { width: 22px; height: 22px; fill: currentColor; display: block; }
 
 /* ---------- Pinned stage ---------- */
 .runway { position: relative; height: 400vh; }
@@ -148,13 +148,13 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   .foot-in > div:first-child { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
-  .name { font-size: 15.5px; padding: 6px 0; }
+  .name { font-size: 22px; padding: 4px 0; }
   .nav { width: 100%; justify-content: space-between; }
-  .nl { padding: 8px 10px 8px 0; }
+  .nl { font-size: 16.5px; padding: 12px 12px 12px 0; }
   .nl::after { left: 0; }
   .sep { display: none; }
   .nav .ib:first-of-type { margin-left: auto; }
-  .hdr-in { padding-top: 10px; padding-bottom: 8px; }
+  .hdr-in { padding-top: 14px; padding-bottom: 8px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .cap.swap { animation: none; }
@@ -247,7 +247,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   var bctx = cvB.getContext('2d'), cctx = cvC.getContext('2d'), lctx = cvL.getContext('2d');
   var mc = document.createElement('canvas').getContext('2d');
 
-  var W = 0, H = 0, fontsReady = false, p1 = 0, p2 = 0, inView = true, LAY = {};
+  var hdrY = 34, W = 0, H = 0, fontsReady = false, p1 = 0, p2 = 0, inView = true, LAY = {};
 
   function fit(cv, ctx, dprMax) {
     var d = Math.min(window.devicePixelRatio || 1, dprMax);
@@ -982,8 +982,8 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   /* ---------------- Scroll choreography ---------------- */
   var CAPS = {
     1: ['Boids · Craig Reynolds', 'The birds follow three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.'],
-    2: ['Clusters · Jeffrey Ventrella', 'Particles of different kinds attract or repel each other by simple rules, and lifelike, self-organising structures emerge. Take a break and watch them.'],
-    3: ['Life · John Conway', 'A cellular automaton. Every cell on a grid lives or dies by counting its neighbours, and from this one rule moving creatuers and spaceships emerge.']
+    2: ['Clusters · Jeffrey Ventrella', 'Particles of different kinds attract or repel each other by simple rules, and lifelike, self-organising structures emerge. Take a break and watch for a while.'],
+    3: ['Life · John Conway', 'A cellular automaton. Every cell on a grid lives or dies by counting its neighbours, and from this one rule moving creatures and spaceships emerge.']
   };
   function prog(t) { t = clamp(t, 0, 1); return t * 0.4 + (t * t * (3 - 2 * t)) * 0.6; }
 
@@ -998,7 +998,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     e2.style.transform = 'translateY(' + e2y.toFixed(1) + 'px)';
     e1.style.opacity = Math.min(1, p1 * 10, (1 - p1) * 10).toFixed(2);
     e2.style.opacity = Math.min(1, p2 * 10, (1 - p2) * 10).toFixed(2);
-    var hy = 34, hs = hy < e1y ? 1 : (hy < e2y ? 2 : 3);
+    var hy = hdrY, hs = hy < e1y ? 1 : (hy < e2y ? 2 : 3);
     if (hdr.dataset.scene !== String(hs)) hdr.dataset.scene = String(hs);
     hdr.style.setProperty('--glass-o', clamp(window.scrollY / 160, 0, 1).toFixed(2));
     var by = H - 26, cs = by < e1y ? 1 : (by < e2y ? 2 : 3);
@@ -1013,6 +1013,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   function layoutAll() {
     W = stage.clientWidth; H = stage.clientHeight;
     if (!W || !H) return;
+    hdrY = Math.max(24, Math.round(hdr.offsetHeight / 2));
     computeLayout(); layoutSerif();
     fit(cvB, bctx, 2); fit(tcv, tctx, 2); fit(cvC, cctx, 1.5);
     var dl = fit(cvL, lctx, 2);
