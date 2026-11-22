@@ -1,0 +1,980 @@
+<title>Ashutosh Bhonsle</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Portfolio of Ashutosh Bhonsle. Nothing is impossible.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap">
+<style>
+/* Layout concept: one sticky full-screen stage holds three stacked scenes. Scrolling a 400vh runway raises a clip edge that
+   reveals the next scene while its content stays put. The glass header is fixed. The footer follows the runway. */
+:root {
+  --ceramic: #d9d4ca;
+  --ceramic-hi: #e9e5dc;
+  --umber: #16130f;
+  --night: #050507;
+  --paper: #f3f0ea;
+  --ultra: #ee1e1e;
+  --ultra-deep: #cc1616;
+  --font-ui: 'Sora', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ceramic);
+  color: var(--umber);
+  font-family: var(--font-ui);
+  overflow-x: clip;
+}
+a { color: inherit; text-decoration: none; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 6px; }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Header ---------- */
+.hdr {
+  --ink: var(--umber);
+  --glass: rgba(217, 212, 202, 0.55);
+  --glass-o: 0;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  padding-top: env(safe-area-inset-top, 0px);
+  color: var(--ink);
+  transition: color 0.3s ease;
+}
+.hdr[data-scene="2"] { --ink: var(--paper); --glass: rgba(7, 5, 5, 0.5); }
+.hdr[data-scene="3"] { --ink: var(--paper); --glass: rgba(204, 22, 22, 0.5); }
+.hdr::before {
+  content: ""; position: absolute; inset: 0 0 -22px 0; z-index: -1; pointer-events: none;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-mask-image: linear-gradient(#000 62%, transparent);
+  mask-image: linear-gradient(#000 62%, transparent);
+  opacity: var(--glass-o);
+}
+.hdr-in {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px;
+  padding-top: 14px; padding-bottom: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.name {
+  font-weight: 700; font-size: 17px; letter-spacing: 0.015em; line-height: 1;
+  padding: 8px 0;
+}
+.nav { display: flex; align-items: center; gap: 2px; min-width: 0; }
+.nl {
+  position: relative; font-size: 13.5px; font-weight: 500; letter-spacing: 0.02em;
+  padding: 9px 11px; border-radius: 8px; opacity: 0.86;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+.nl::after {
+  content: ""; position: absolute; left: 11px; right: 11px; bottom: 5px; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
+}
+.nl:hover, .nl:focus-visible { opacity: 1; }
+.nl:hover::after, .nl:focus-visible::after { transform: scaleX(1); }
+.sep { width: 1px; height: 16px; background: currentColor; opacity: 0.25; margin: 0 8px; }
+.ib {
+  display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; opacity: 0.8;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+.ib:hover, .ib:focus-visible { opacity: 1; background: color-mix(in srgb, currentColor 12%, transparent); }
+.ico { width: 18px; height: 18px; fill: currentColor; display: block; }
+
+/* ---------- Pinned stage ---------- */
+.runway { position: relative; height: 400vh; }
+.stage { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--night); }
+.scene { position: absolute; inset: 0; will-change: clip-path; }
+.s3 { z-index: 1; background: radial-gradient(120% 90% at 50% 38%, #f62727 0%, var(--ultra) 52%, var(--ultra-deep) 100%); }
+.s2 { z-index: 2; background: var(--night); }
+.s1 {
+  z-index: 3;
+  background: radial-gradient(90% 75% at 28% 18%, var(--ceramic-hi) 0%, rgba(233, 229, 220, 0) 70%), var(--ceramic);
+}
+.s1::after {
+  content: ""; position: absolute; inset: 0; opacity: 0.5; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .24 6 0 0 0 -3.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.scene canvas, .boidlayer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.boidlayer { z-index: 5; pointer-events: none; }
+.edge {
+  position: absolute; left: 0; right: 0; top: 0; height: 56px; z-index: 4; pointer-events: none; opacity: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 20, 0.34), rgba(0, 0, 20, 0));
+  will-change: transform;
+}
+.serif span {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; line-height: 1;
+  font-family: var(--font-serif); font-style: italic; font-weight: 300; letter-spacing: -0.01em;
+  color: var(--paper); text-shadow: 0 0 42px rgba(0, 0, 0, 0.55);
+}
+.serif { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+.cap {
+  position: absolute; z-index: 6; bottom: 20px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 500; color: var(--ink); transition: color 0.3s ease;
+}
+.cap { --ink: var(--umber); left: max(16px, env(safe-area-inset-left, 0px)); opacity: 0.7; }
+.cap[data-scene="2"], .cap[data-scene="3"] { --ink: var(--paper); }
+.cap.swap { animation: capIn 0.5s ease both; }
+@keyframes capIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 0.7; transform: none; } }
+
+/* ---------- Footer ---------- */
+.foot {
+  position: relative; z-index: 3; color: var(--paper); background: var(--ultra-deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+.foot-in {
+  max-width: 1120px; margin: 0 auto; display: grid; gap: 40px 48px; grid-template-columns: 1.4fr 1fr 1fr;
+  padding-top: 64px; padding-bottom: 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.foot h2 { margin: 0 0 6px; font-size: 20px; font-weight: 700; letter-spacing: 0.01em; }
+.foot p { margin: 0; max-width: 34ch; font-size: 14px; line-height: 1.6; opacity: 0.78; }
+.foot h3 { margin: 0 0 14px; font-size: 11.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.foot li a { font-size: 14.5px; opacity: 0.9; display: inline-flex; align-items: center; gap: 10px; transition: opacity 0.2s ease; }
+.foot li a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+.foot .ico { width: 16px; height: 16px; }
+.foot-base {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px;
+  padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.18); font-size: 12.5px; opacity: 0.72;
+}
+
+@media (max-width: 760px) {
+  .foot-in { grid-template-columns: 1fr 1fr; padding-top: 48px; }
+  .foot-in > div:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .name { font-size: 15.5px; padding: 6px 0; }
+  .nav { width: 100%; justify-content: space-between; }
+  .nl { padding: 8px 10px 8px 0; }
+  .nl::after { left: 0; }
+  .sep { display: none; }
+  .nav .ib:first-of-type { margin-left: auto; }
+  .hdr-in { padding-top: 10px; padding-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cap.swap { animation: none; }
+  .nl::after { transition: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-gh" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+  <symbol id="i-li" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol>
+  <symbol id="i-yt" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol>
+</svg>
+
+<!-- Replace the three social URLs below with your own handles; About and Projects point at pages still to be built. -->
+<header class="hdr" id="hdr" data-scene="1">
+  <div class="hdr-in">
+    <a class="name" href="#top">Ashutosh Bhonsle</a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nl" href="#about">About</a>
+      <a class="nl" href="#projects">Projects</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a class="ib" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ico" aria-hidden="true"><use href="#i-gh"/></svg></a>
+      <a class="ib" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ico" aria-hidden="true"><use href="#i-li"/></svg></a>
+      <a class="ib" href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="YouTube"><svg class="ico" aria-hidden="true"><use href="#i-yt"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <h1 class="sr">Nothing is impossible</h1>
+  <div class="runway" id="runway">
+    <div class="stage" id="stage" aria-hidden="true">
+      <section class="scene s3" id="s3"><canvas id="life"></canvas></section>
+      <section class="scene s2" id="s2">
+        <canvas id="clusters"></canvas>
+        <div class="serif"><span id="serA">Nothing is</span><span id="serB">impossible</span></div>
+      </section>
+      <section class="scene s1" id="s1"></section>
+      <div class="edge" id="e2"></div>
+      <div class="edge" id="e1"></div>
+      <canvas class="boidlayer" id="boids"></canvas>
+      <div class="cap" id="cap" data-scene="1">Boids · Craig Reynolds</div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot" id="footer">
+  <div class="foot-in">
+    <div>
+      <h2>Ashutosh Bhonsle</h2>
+      <p>Inspired by the algorithms of nature. Nothing is impossible.</p>
+    </div>
+    <div>
+      <h3>Pages</h3>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Elsewhere</h3>
+      <ul>
+        <li><a href="https://github.com/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-gh"/></svg>GitHub</a></li>
+        <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-li"/></svg>LinkedIn</a></li>
+        <li><a href="https://www.youtube.com/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-yt"/></svg>YouTube</a></li>
+      </ul>
+    </div>
+    <div class="foot-base">
+      <span>© 2026 Ashutosh Bhonsle</span>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var $ = function (id) { return document.getElementById(id); };
+  var clamp = function (x, a, b) { return x < a ? a : (x > b ? b : x); };
+  var TAU = Math.PI * 2;
+  var SANS = "Sora,'Helvetica Neue',Arial,sans-serif";
+  var SERIF = "'Cormorant Garamond','Iowan Old Style',Georgia,serif";
+
+  var runway = $('runway'), stage = $('stage'), s1 = $('s1'), s2 = $('s2'), s3 = $('s3');
+  var e1 = $('e1'), e2 = $('e2'), hdr = $('hdr'), cap = $('cap');
+  var serA = $('serA'), serB = $('serB');
+  var cvB = $('boids'), cvC = $('clusters'), cvL = $('life');
+  var bctx = cvB.getContext('2d'), cctx = cvC.getContext('2d'), lctx = cvL.getContext('2d');
+  var mc = document.createElement('canvas').getContext('2d');
+
+  var W = 0, H = 0, fontsReady = false, p1 = 0, p2 = 0, inView = true, LAY = {};
+
+  function fit(cv, ctx, dprMax) {
+    var d = Math.min(window.devicePixelRatio || 1, dprMax);
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    return d;
+  }
+  function mulberry32(a) {
+    return function () {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  // Stateless hash -> [0,1). Used for flicker that is stable within a tick.
+  function hash2(i, k) {
+    var h = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(k + 0x7f4a7c15, 0xc2b2ae35);
+    h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12;
+    return (h >>> 0) / 4294967296;
+  }
+
+  /* ---------------- Shared text layout (same centre for all three scenes) ---------------- */
+  function computeLayout() {
+    var wt = Math.min(W * (W < 700 ? 0.86 : 0.62), H * 1.55);
+    mc.font = '800 100px ' + SANS; var mw8 = mc.measureText('impossible').width / 100;
+    mc.font = '700 100px ' + SANS; var mw7 = mc.measureText('impossible').width / 100;
+    mc.font = 'italic 300 100px ' + SERIF; var sw = mc.measureText('impossible').width / 100;
+    var fs = wt / mw8;
+    LAY = { cx: W / 2, cy: H / 2, wt: wt, fs: fs, pitch: fs * 0.96, fs7: wt / mw7, fs2: wt * 0.94 / sw };
+  }
+  function layoutSerif() {
+    var f = LAY.fs2, pitch = f * 0.8;
+    serA.style.fontSize = f + 'px'; serB.style.fontSize = f + 'px';
+    serA.style.top = (LAY.cy - pitch / 2 - f / 2) + 'px';
+    serB.style.top = (LAY.cy + pitch / 2 - f / 2) + 'px';
+  }
+
+  /* ---------------- Scene 1: two leader-led swarms that swoop into the words ----------------
+     Hardcoded rhythm: the swarms fly free for GAP_T seconds, then the boids start their swoop one by one
+     (eased in: a trickle at first, then more and more) until the words are formed. The words stay for HOLD_T
+     seconds, then dissolve (eased out) into exactly two swarms that head off in random directions.
+     Swarm positions and headings are random at the start and at every exit. While the words are up EVERY boid
+     is inside them, flying fast, bouncing off the letter outlines and leaving a short light trail. */
+  var HOLD_T = 3.0;      // seconds the words stay formed
+  var GAP_T = 5.0;       // seconds the two swarms fly free before the words form again (also before the first time)
+  var EASE_IN_T = 0.9;   // boids start their swoop spread over this long (eased in: few at first, then many)
+  var LEAD_T = 1.8;      // from the first boid starting its swoop until the words are fully formed
+  var DISSOLVE_T = 1.0;  // the words thin out over this long (eased out: fast at first, then trailing off)
+
+  var BO = { N: 0, u: 1, x: null, y: null, vx: null, vy: null, tx: null, ty: null, mode: null, relAt: null,
+    px: null, py: null, grp: null, has: null, pullAt: null, tIdle: 0,
+    head: null, next: null, targets: [], mask: null, ev: 0, tPull: 0, tRel: -10, nextPull: 0, dis: false,
+    clock: 0, started: false, M: 0, LX: [0, 0], LY: [0, 0], LVX: [0, 0], LVY: [0, 0], LA: [0, 0], LW: [0, 0] };
+
+  // Trail layer: only boids that are inside the words draw into it; it fades a little every frame.
+  var tcv = document.createElement('canvas'), tctx = tcv.getContext('2d');
+
+  function angDiff(a, b) { return Math.atan2(Math.sin(a - b), Math.cos(a - b)); }
+
+  // Two swarm leaders: each flies on its own heading with a slowly wandering turn rate, turns back from the
+  // screen edges and steers away from the other leader so the swarms stay two separate swarms.
+  function setLeaderVel(sp) {
+    for (var k = 0; k < 2; k++) { BO.LVX[k] = Math.cos(BO.LA[k]) * sp; BO.LVY[k] = Math.sin(BO.LA[k]) * sp; }
+  }
+  function initLeaders() {
+    var mxg = W * 0.2, myg = H * 0.22, dmin = Math.min(W, H) * 0.45, ax = 0, ay = 0, bx = 0, by = 0;
+    for (var t = 0; t < 30; t++) {
+      ax = mxg + Math.random() * (W - 2 * mxg); ay = myg + Math.random() * (H - 2 * myg);
+      bx = mxg + Math.random() * (W - 2 * mxg); by = myg + Math.random() * (H - 2 * myg);
+      if (Math.hypot(ax - bx, ay - by) >= dmin) break;
+    }
+    BO.LX[0] = ax; BO.LY[0] = ay; BO.LX[1] = bx; BO.LY[1] = by;
+    BO.LA[0] = Math.random() * TAU; BO.LA[1] = BO.LA[0] + 1.2 + Math.random() * (TAU - 2.4);
+    BO.LW[0] = BO.LW[1] = 0;
+    setLeaderVel(3.6 * BO.u);
+  }
+  function stepLeaders(f) {
+    var u = BO.u, r = clamp((BO.clock - BO.tRel) / 1.6, 0, 1);
+    var sp = 3.6 * u * (0.25 + 0.75 * r * r * (3 - 2 * r));   // swarms pick up speed gently after an exit
+    var mxg = W * 0.14, myg = H * 0.16, dm = Math.min(W, H) * 0.3;
+    for (var k = 0; k < 2; k++) {
+      var x = BO.LX[k], y = BO.LY[k], a = BO.LA[k], w = BO.LW[k];
+      w = w * 0.97 + (Math.random() - 0.5) * 0.012 * f;
+      a += w * f;
+      if (x < mxg || x > W - mxg || y < myg || y > H - myg) {
+        a += angDiff(Math.atan2(LAY.cy - y, LAY.cx - x), a) * 0.06 * f;
+      } else {
+        var dx = x - BO.LX[1 - k], dy = y - BO.LY[1 - k];
+        if (dx * dx + dy * dy < dm * dm) a += angDiff(Math.atan2(dy, dx), a) * 0.03 * f;
+      }
+      BO.LA[k] = a; BO.LW[k] = w;
+      BO.LX[k] = x + Math.cos(a) * sp * f; BO.LY[k] = y + Math.sin(a) * sp * f;
+    }
+    setLeaderVel(sp);
+  }
+
+  // mode 0 = flocking behind a leader, 1 = swooping toward a point inside a letter, 2 = flying inside the letters
+  function inMask(x, y) {
+    var xi = x | 0, yi = y | 0;
+    return xi >= 0 && yi >= 0 && xi < W && yi < H && BO.mask[yi * W + xi] === 1;
+  }
+
+  function sampleTargets() {
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var g = c.getContext('2d', { willReadFrequently: true });
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    // same font, size and line spacing as the words on the clusters page (see layoutSerif)
+    var sf = LAY.fs2, sp2 = sf * 0.8;
+    g.font = 'italic 300 ' + sf + 'px ' + SERIF;
+    g.fillText('Nothing is', LAY.cx, LAY.cy - sp2 / 2);
+    g.fillText('impossible', LAY.cx, LAY.cy + sp2 / 2);
+    // Elegant down arrow made of boids, centred beneath the words: a thin stem with an open chevron head.
+    var ay0 = LAY.cy + sp2 / 2 + sf * 0.62, alen = Math.min(sf * 0.6, H - 36 - ay0);
+    if (alen > 24) {
+      var ahw = alen * 0.36;
+      g.strokeStyle = '#fff'; g.lineWidth = Math.max(7, sf * 0.04); g.lineCap = 'round'; g.lineJoin = 'round';
+      g.beginPath();
+      g.moveTo(LAY.cx, ay0); g.lineTo(LAY.cx, ay0 + alen);
+      g.moveTo(LAY.cx - ahw, ay0 + alen - ahw); g.lineTo(LAY.cx, ay0 + alen); g.lineTo(LAY.cx + ahw, ay0 + alen - ahw);
+      g.stroke();
+    }
+    var d = g.getImageData(0, 0, W, H).data, n = W * H, i;
+    var mask = new Uint8Array(n);
+    for (i = 0; i < n; i++) mask[i] = d[i * 4] > 128 ? 1 : 0;
+    BO.mask = mask;
+    var maxT = Math.floor(BO.N * 0.94), step = Math.max(2, LAY.fs2 / 48), pts = [];
+    for (var it = 0; it < 40; it++) {
+      pts = [];
+      for (var y = step / 2; y < H; y += step) {
+        for (var x = step / 2; x < W; x += step) {
+          if (mask[(y | 0) * W + (x | 0)] === 1) {
+            var jx = x + (Math.random() - 0.5) * step * 0.6, jy = y + (Math.random() - 0.5) * step * 0.6;
+            if (mask[(jy | 0) * W + (jx | 0)] !== 1) { jx = x; jy = y; }
+            pts.push(jx, jy);
+          }
+        }
+      }
+      if (pts.length / 2 <= maxT) break;
+      step *= 1.05;
+    }
+    BO.targets = pts; BO.M = pts.length / 2;
+  }
+
+  function initBoids() {
+    var u = clamp(Math.sqrt(W * H) / 1100, 0.62, 1.3), N = clamp(Math.round(W * H / 460), 2600, 7500);
+    BO.u = u; BO.N = N;
+    BO.x = new Float32Array(N); BO.y = new Float32Array(N); BO.vx = new Float32Array(N); BO.vy = new Float32Array(N);
+    BO.tx = new Float32Array(N); BO.ty = new Float32Array(N); BO.relAt = new Float32Array(N);
+    BO.mode = new Uint8Array(N); BO.next = new Int32Array(N); BO.head = null;
+    BO.px = new Float32Array(N); BO.py = new Float32Array(N); BO.grp = new Uint8Array(N);
+    BO.has = new Uint8Array(N); BO.pullAt = new Float32Array(N);
+    BO.clock = 0; BO.tRel = -10;
+    initLeaders();
+    for (var i = 0; i < N; i++) {
+      var g = i & 1, sp = (3 + Math.random() * 2) * u; BO.grp[i] = g;
+      BO.x[i] = clamp(BO.LX[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280, 1, W - 2);
+      BO.y[i] = clamp(BO.LY[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280, 1, H - 2);
+      var a = Math.atan2(BO.LVY[g], BO.LVX[g]) + (Math.random() - 0.5) * 0.8;
+      BO.vx[i] = Math.cos(a) * sp; BO.vy[i] = Math.sin(a) * sp;
+    }
+    BO.px.set(BO.x); BO.py.set(BO.y); BO.tIdle = 0;
+    BO.ev = 0; BO.clock = 0; BO.started = false; BO.nextPull = 0; BO.tPull = 0; BO.tRel = -10; BO.dis = false;
+    sampleTargets();
+    if (REDUCED) {
+      assignTargets();
+      for (var j = 0; j < N; j++) {
+        if (BO.has[j]) { BO.has[j] = 0; BO.mode[j] = 2; BO.x[j] = BO.tx[j]; BO.y[j] = BO.ty[j]; BO.vx[j] = 1; BO.vy[j] = 0; }
+      }
+    }
+  }
+
+  // Each letter point claims the nearest free boid (found with a coarse grid so there is no hitch).
+  // Boids left over (there are always a few more boids than points) take a random letter point,
+  // so every boid ends up in the words.
+  function assignTargets() {
+    var N = BO.N, T = BO.targets, M = BO.M, X = BO.x, Y = BO.y, i, j, k;
+    var cs = 48, gc = Math.ceil(W / cs) + 1, gr = Math.ceil(H / cs) + 1;
+    var head = new Int32Array(gc * gr).fill(-1), nx = new Int32Array(N), taken = new Uint8Array(N);
+    for (i = 0; i < N; i++) {
+      var c = clamp((Y[i] / cs) | 0, 0, gr - 1) * gc + clamp((X[i] / cs) | 0, 0, gc - 1);
+      nx[i] = head[c]; head[c] = i; BO.mode[i] = 0; BO.has[i] = 0;
+    }
+    var order = [];
+    for (k = 0; k < M; k++) order.push(k);
+    for (k = M - 1; k > 0; k--) { var r0 = (Math.random() * (k + 1)) | 0, t0 = order[k]; order[k] = order[r0]; order[r0] = t0; }
+    var rmax = Math.max(gc, gr);
+    for (var oi = 0; oi < M; oi++) {
+      k = order[oi];
+      var tx = T[2 * k], ty = T[2 * k + 1], best = -1, bd = 1e18;
+      var cx0 = clamp((tx / cs) | 0, 0, gc - 1), cy0 = clamp((ty / cs) | 0, 0, gr - 1);
+      for (var r = 0; r <= rmax; r++) {
+        if (best >= 0) { var lim = (r - 1) * cs; if (lim > 0 && lim * lim > bd) break; }
+        for (var gy = cy0 - r; gy <= cy0 + r; gy++) {
+          if (gy < 0 || gy >= gr) continue;
+          var edgeRow = (gy === cy0 - r || gy === cy0 + r), stp = edgeRow ? 1 : (2 * r || 1);
+          for (var gx = cx0 - r; gx <= cx0 + r; gx += stp) {
+            if (gx < 0 || gx >= gc) continue;
+            for (j = head[gy * gc + gx]; j !== -1; j = nx[j]) {
+              if (taken[j]) continue;
+              var dx = X[j] - tx, dy = Y[j] - ty, d = dx * dx + dy * dy;
+              if (d < bd) { bd = d; best = j; }
+            }
+          }
+        }
+      }
+      if (best < 0) break;
+      taken[best] = 1; BO.tx[best] = tx; BO.ty[best] = ty; BO.has[best] = 1;
+    }
+    for (i = 0; i < N; i++) {
+      if (!taken[i] && M > 0) {
+        var pk = (Math.random() * M) | 0;
+        BO.tx[i] = T[2 * pk]; BO.ty[i] = T[2 * pk + 1]; BO.has[i] = 1;
+      }
+    }
+    // Ease-in: each boid starts its swoop at its own moment. sqrt(random) makes starts rare at first and
+    // then more and more frequent, the mirror image of the eased dissolve.
+    for (i = 0; i < N; i++) if (BO.has[i]) BO.pullAt[i] = BO.clock + EASE_IN_T * Math.sqrt(Math.random());
+  }
+
+  // Eased dissolve into exactly two swarms: two random, clearly different headings are picked, every boid joins the
+  // swarm whose heading it lies ahead of, and the two leaders start inside the words and fly off. Boids leave the
+  // letters one by one (quickly at first, then trailing off) and are pulled hard toward their leader at first.
+  function releaseBoids() {
+    BO.ev = 0; BO.tRel = BO.clock; BO.dis = true; BO.nextPull = BO.clock + DISSOLVE_T + GAP_T;
+    var a0 = Math.random() * TAU, a1 = a0 + 1.6 + Math.random() * (TAU - 3.2);
+    var d0x = Math.cos(a0), d0y = Math.sin(a0), d1x = Math.cos(a1), d1y = Math.sin(a1);
+    var off = LAY.wt * 0.15, cx = LAY.cx, cy = LAY.cy;
+    BO.LA[0] = a0; BO.LA[1] = a1; BO.LW[0] = BO.LW[1] = 0;
+    BO.LX[0] = clamp(cx + d0x * off, 20, W - 20); BO.LY[0] = clamp(cy + d0y * off, 20, H - 20);
+    BO.LX[1] = clamp(cx + d1x * off, 20, W - 20); BO.LY[1] = clamp(cy + d1y * off, 20, H - 20);
+    setLeaderVel(0.9 * BO.u);
+    var sx = d0x - d1x, sy = d0y - d1y;
+    for (var i = 0; i < BO.N; i++) {
+      BO.grp[i] = ((BO.x[i] - cx) * sx + (BO.y[i] - cy) * sy) > 0 ? 0 : 1;
+      BO.has[i] = 0;
+      if (BO.mode[i] > 0) BO.relAt[i] = BO.clock + DISSOLVE_T * (1 - Math.sqrt(1 - Math.random()));
+    }
+  }
+
+  function stepBoids(dt) {
+    if (REDUCED || !BO.N) return;
+    var N = BO.N, u = BO.u, f = clamp(dt * 60, 0.4, 2.2), fm = Math.min(f, 1.2), t, i;
+    BO.clock += dt; t = BO.clock;
+    stepLeaders(f);
+
+    // hardcoded timeline
+    if (BO.ev === 0) {
+      if (!BO.started) {
+        if (fontsReady && t > 0.4 && BO.M > 0) { BO.started = true; BO.nextPull = t + GAP_T; }
+      } else if (t >= BO.nextPull) {
+        if (p1 < 0.3 && BO.M > 0) { BO.ev = 1; BO.dis = false; BO.tPull = t; assignTargets(); }
+        else BO.nextPull = t + 0.5;
+      }
+    } else if (BO.ev === 1) {
+      if (t - BO.tPull >= LEAD_T + HOLD_T) releaseBoids();
+    }
+    if (BO.dis && t > BO.tRel + DISSOLVE_T + 0.05) BO.dis = false;
+
+    var cs = 20 * u, PB = 70 * u;   // PB: the bounce wall lies this far outside the screen on every side
+    var gc = Math.ceil((W + 2 * PB) / cs) + 1, gr = Math.ceil((H + 2 * PB) / cs) + 1;
+    if (!BO.head || BO.head.length !== gc * gr) BO.head = new Int32Array(gc * gr);
+    var head = BO.head, next = BO.next, X = BO.x, Y = BO.y, VX = BO.vx, VY = BO.vy, MD = BO.mode;
+    var PX = BO.px, PY = BO.py, GRP = BO.grp, HAS = BO.has, PULL = BO.pullAt;
+    var boost = clamp(1 - (t - BO.tRel) / 2.2, 0, 1);   // right after an exit: stronger pull to the leader
+    head.fill(-1);
+    for (i = 0; i < N; i++) {
+      if (MD[i] === 0) { var c = clamp(((Y[i] + PB) / cs) | 0, 0, gr - 1) * gc + clamp(((X[i] + PB) / cs) | 0, 0, gc - 1); next[i] = head[c]; head[c] = i; }
+    }
+    var vis2 = cs * cs, sep2 = (8 * u) * (8 * u), mx = 7.5 * u * (1 + 0.4 * boost), mn = 3 * u, vcap = 26 * u;
+
+    for (i = 0; i < N; i++) {
+      if (BO.dis && MD[i] > 0 && t >= BO.relAt[i]) MD[i] = 0;
+      if (MD[i] === 0 && HAS[i] && t >= PULL[i]) { MD[i] = 1; HAS[i] = 0; }   // this boid's swoop begins
+      var x = X[i], y = Y[i], vx = VX[i], vy = VY[i];
+      PX[i] = x; PY[i] = y;
+      if (MD[i] === 0) {
+        // follow-the-leader flocking: same-swarm neighbours (align, cohere, separate) + pull toward the swarm leader
+        var g = GRP[i], n = 0, ax = 0, ay = 0, px = 0, py = 0, sx = 0, sy = 0;
+        var gx0 = ((x + PB) / cs) | 0, gy0 = ((y + PB) / cs) | 0;
+        for (var gy = gy0 - 1; gy <= gy0 + 1; gy++) {
+          if (gy < 0 || gy >= gr) continue;
+          for (var gx = gx0 - 1; gx <= gx0 + 1; gx++) {
+            if (gx < 0 || gx >= gc) continue;
+            for (var j = head[gy * gc + gx]; j !== -1; j = next[j]) {
+              if (j === i || GRP[j] !== g) continue;
+              var dx = X[j] - x, dy = Y[j] - y, d2 = dx * dx + dy * dy;
+              if (d2 < vis2) {
+                n++; ax += VX[j]; ay += VY[j]; px += X[j]; py += Y[j];
+                if (d2 < sep2) { sx -= dx; sy -= dy; }
+              }
+            }
+          }
+        }
+        var accx = sx * 0.05, accy = sy * 0.05;
+        if (n > 0) {
+          accx += (ax / n - vx) * 0.08 + (px / n - x) * 0.004;
+          accy += (ay / n - vy) * 0.08 + (py / n - y) * 0.004;
+        }
+        var ldx = BO.LX[g] - x, ldy = BO.LY[g] - y, ld = Math.sqrt(ldx * ldx + ldy * ldy) + 1;
+        var pull = Math.min(ld / 260, 1) * 0.12 * u * (1 + 2.2 * boost);
+        accx += ldx / ld * pull + (BO.LVX[g] - vx) * 0.012 + (Math.random() - 0.5) * 0.08;
+        accy += ldy / ld * pull + (BO.LVY[g] - vy) * 0.012 + (Math.random() - 0.5) * 0.08;
+        vx += accx * f; vy += accy * f;
+        var sp = Math.sqrt(vx * vx + vy * vy) || 0.0001;
+        if (sp > mx) { var kk = Math.max(mx / sp, 1 - 0.04 * f); vx *= kk; vy *= kk; }   // eased slow-down after the words
+        else if (sp < mn) { vx *= mn / sp; vy *= mn / sp; }
+        x += vx * f; y += vy * f;
+        if (x < -PB) { x = -PB; vx = Math.abs(vx); } else if (x > W + PB) { x = W + PB; vx = -Math.abs(vx); }
+        if (y < -PB) { y = -PB; vy = Math.abs(vy); } else if (y > H + PB) { y = H + PB; vy = -Math.abs(vy); }
+      } else if (MD[i] === 1) {
+        // Swoop: gravity well on this boid's letter point (under-damped spring, so it overshoots and
+        // swirls in), a sideways swirl component and jitter. At its letter it drops into the words.
+        var ddx = BO.tx[i] - x, ddy = BO.ty[i] - y, d = Math.sqrt(ddx * ddx + ddy * ddy) + 0.001;
+        var sw = 0.02;
+        var rp = clamp((t - PULL[i]) / 0.45, 0, 1); rp = rp * rp * (3 - 2 * rp);   // the pull eases in for each boid
+        vx += ((ddx * 0.055 - ddy * sw - vx * 0.2 + (Math.random() - 0.5) * 0.9 * u) * rp) * f;
+        vy += ((ddy * 0.055 + ddx * sw - vy * 0.2 + (Math.random() - 0.5) * 0.9 * u) * rp) * f;
+        var sq = Math.sqrt(vx * vx + vy * vy);
+        if (sq > vcap) { vx *= vcap / sq; vy *= vcap / sq; }
+        x += vx * f; y += vy * f;
+        if (d < 10 && inMask(x, y)) {
+          MD[i] = 2;
+          var ha = Math.random() * TAU, hs = (12 + (i % 5) * 2.5) * u;
+          vx = Math.cos(ha) * hs; vy = Math.sin(ha) * hs;
+        }
+      } else {
+        // Inside the letters: swoop-speed flight with a restless heading, bouncing off the letter outline.
+        var spd = (12 + (i % 5) * 2.5) * u;
+        vx += (Math.random() - 0.5) * spd * 0.5; vy += (Math.random() - 0.5) * spd * 0.5;
+        var sq2 = Math.sqrt(vx * vx + vy * vy) || 1;
+        vx *= spd / sq2; vy *= spd / sq2;
+        if (!inMask(x, y)) {
+          // slipped out (thin stroke): drift back toward its own letter point
+          x += (BO.tx[i] - x) * 0.3; y += (BO.ty[i] - y) * 0.3;
+        } else {
+          var steps = Math.max(1, Math.ceil(spd * fm / 4)), mxs = vx * fm / steps, mys = vy * fm / steps;
+          for (var q = 0; q < steps; q++) {
+            var nx2 = x + mxs, ny2 = y + mys;
+            if (inMask(nx2, ny2)) { x = nx2; y = ny2; }
+            else if (inMask(nx2, y)) { x = nx2; vy = -vy; mys = -mys; }
+            else if (inMask(x, ny2)) { y = ny2; vx = -vx; mxs = -mxs; }
+            else { vx = -vx; vy = -vy; mxs = -mxs; mys = -mys; }
+          }
+        }
+      }
+      X[i] = x; Y[i] = y; VX[i] = vx; VY[i] = vy;
+    }
+  }
+
+  function drawBoids() {
+    var ctx = bctx; ctx.clearRect(0, 0, W, H);
+    if (!BO.N) return;
+    var edge = H * (1 - p1), N = BO.N, u = BO.u, L = 4.6 * u, Wd = 2.1 * u, MD = BO.mode, pass, i;
+
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, Math.max(0, edge)); ctx.clip();   // nothing is drawn past the scroll edge
+
+    // Light trail: boids inside the words draw short soft strokes into an offscreen layer that fades each frame.
+    if (!REDUCED) {
+      var inText = 0;
+      tctx.globalCompositeOperation = 'destination-out'; tctx.globalAlpha = 0.98; tctx.fillStyle = '#000';
+      tctx.fillRect(0, 0, W, H);
+      tctx.globalCompositeOperation = 'source-over'; tctx.globalAlpha = 0.5;
+      tctx.lineCap = 'round'; tctx.lineWidth = Wd * 1.2;
+      for (pass = 0; pass < 1; pass++) {
+        tctx.beginPath();
+        for (i = 0; i < N; i++) {
+          if (MD[i] !== 2) continue;
+          var ty = BO.y[i];
+          if (ty > edge) continue;
+          tctx.moveTo(BO.px[i], BO.py[i]); tctx.lineTo(BO.x[i], ty); inText++;
+        }
+        tctx.strokeStyle = pass === 0 ? 'rgb(0, 0, 0)' : 'rgba(243, 240, 234, 0)';
+        tctx.stroke();
+      }
+      if (inText) BO.tIdle = 0;
+      else if (++BO.tIdle === 20) tctx.clearRect(0, 0, W, H);   // wipe any faint leftovers once the trail is gone
+      if (BO.tIdle < 20) ctx.drawImage(tcv, 0, 0, W, H);
+    }
+
+    ctx.globalAlpha = 0.95;
+    for (pass = 0; pass < 1; pass++) {
+      ctx.beginPath();
+      for (i = 0; i < N; i++) {
+        var x = BO.x[i], y = BO.y[i];
+        if (y > edge) continue;
+        var vx = BO.vx[i], vy = BO.vy[i], sp = Math.sqrt(vx * vx + vy * vy) || 1;
+        var ux = vx / sp, uy = vy / sp, nx = -uy, ny = ux;
+        var len = L + (sp > 8 * u ? (sp - 8 * u) * 0.7 : 0);   // fast boids (in the words) get a short motion streak
+        var hx = x + ux * len * 0.55, hy = y + uy * len * 0.55, bx = x - ux * len * 0.45, by = y - uy * len * 0.45;
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(bx + nx * Wd / 2, by + ny * Wd / 2);
+        ctx.lineTo(bx - nx * Wd / 2, by - ny * Wd / 2);
+        ctx.closePath();
+      }
+      ctx.fillStyle = pass === 0 ? '#17140f' : '#f3f0ea';
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  /* ---------------- Scene 2: Ventrella-style Clusters (particle life) ---------------- */
+  var CL = { n: 0, M: 6, S: 1, WW: 1, HH: 1, x: null, y: null, vx: null, vy: null, sp: null, mat: null,
+    cx: 3, cy: 3, start: null, order: null, cell: null, bySp: [], warm: 0,
+    RMAX: 0.095, BETA: 0.3, DT: 0.02, FF: 10, fric: Math.pow(0.5, 0.02 / 0.04) };
+  var COLS = ['#ff4d6d', '#ff9e2c', '#d7f548', '#2be3b0', '#38a8ff', '#b57bff'];
+
+  function initClusters() {
+    var N = clamp(Math.round(W * H / 1500), 520, 900), M = CL.M, rnd = mulberry32(11), i, j;
+    CL.n = N; CL.S = Math.sqrt(1000 * W * H / N); CL.WW = W / CL.S; CL.HH = H / CL.S;
+    CL.cx = Math.max(3, Math.floor(CL.WW / CL.RMAX)); CL.cy = Math.max(3, Math.floor(CL.HH / CL.RMAX));
+    CL.x = new Float32Array(N); CL.y = new Float32Array(N); CL.vx = new Float32Array(N); CL.vy = new Float32Array(N);
+    CL.sp = new Uint8Array(N); CL.order = new Int32Array(N); CL.cell = new Int32Array(N);
+    CL.start = new Int32Array(CL.cx * CL.cy + 1);
+    CL.bySp = []; for (j = 0; j < M; j++) CL.bySp.push([]);
+    for (i = 0; i < N; i++) {
+      CL.x[i] = rnd() * CL.WW; CL.y[i] = rnd() * CL.HH; CL.sp[i] = (rnd() * M) | 0;
+      CL.bySp[CL.sp[i]].push(i);
+    }
+    var mat = new Float32Array(M * M);
+    for (i = 0; i < M; i++) {
+      mat[i * M + i] = 0.35;
+      mat[i * M + (i + 1) % M] = 0.55;
+      mat[((i + 1) % M) * M + i] = -0.45;
+    }
+    for (i = 0; i < M * M; i++) mat[i] += (rnd() - 0.5) * 0.24;
+    CL.mat = mat; CL.warm = 0;
+    cctx.fillStyle = '#050507'; cctx.fillRect(0, 0, W, H);
+  }
+
+  function stepClusters() {
+    var n = CL.n, M = CL.M, WW = CL.WW, HH = CL.HH, RMAX = CL.RMAX, BETA = CL.BETA;
+    var cx = CL.cx, cy = CL.cy, cw = WW / cx, ch = HH / cy, hw = WW / 2, hh = HH / 2;
+    var X = CL.x, Y = CL.y, VX = CL.vx, VY = CL.vy, SP = CL.sp, mat = CL.mat, start = CL.start, order = CL.order, cell = CL.cell;
+    var i, j, k, c, ncell = cx * cy, R2 = RMAX * RMAX;
+    start.fill(0);
+    for (i = 0; i < n; i++) {
+      c = (Math.min(cy - 1, (Y[i] / ch) | 0)) * cx + Math.min(cx - 1, (X[i] / cw) | 0);
+      cell[i] = c; start[c + 1]++;
+    }
+    for (c = 0; c < ncell; c++) start[c + 1] += start[c];
+    var fill = new Int32Array(ncell);
+    for (i = 0; i < n; i++) { c = cell[i]; order[start[c] + fill[c]++] = i; }
+
+    var fric = CL.fric, kf = RMAX * CL.FF * CL.DT;
+    for (i = 0; i < n; i++) {
+      var xi = X[i], yi = Y[i], row = SP[i] * M, gx = Math.min(cx - 1, (xi / cw) | 0), gy = Math.min(cy - 1, (yi / ch) | 0);
+      var fx = 0, fy = 0;
+      for (var oy = -1; oy <= 1; oy++) {
+        var yy = (gy + oy + cy) % cy;
+        for (var ox = -1; ox <= 1; ox++) {
+          var xx = (gx + ox + cx) % cx, cc = yy * cx + xx;
+          for (k = start[cc]; k < start[cc + 1]; k++) {
+            j = order[k]; if (j === i) continue;
+            var dx = X[j] - xi, dy = Y[j] - yi;
+            if (dx > hw) dx -= WW; else if (dx < -hw) dx += WW;
+            if (dy > hh) dy -= HH; else if (dy < -hh) dy += HH;
+            var r2 = dx * dx + dy * dy;
+            if (r2 >= R2 || r2 === 0) continue;
+            var r = Math.sqrt(r2), q = r / RMAX, fo;
+            if (q < BETA) fo = q / BETA - 1;
+            else fo = mat[row + SP[j]] * (1 - Math.abs(2 * q - 1 - BETA) / (1 - BETA));
+            fx += dx / r * fo; fy += dy / r * fo;
+          }
+        }
+      }
+      VX[i] = VX[i] * fric + fx * kf; VY[i] = VY[i] * fric + fy * kf;
+    }
+    var dt = CL.DT;
+    for (i = 0; i < n; i++) {
+      var nx = X[i] + VX[i] * dt, ny = Y[i] + VY[i] * dt;
+      if (nx < 0) nx += WW; else if (nx >= WW) nx -= WW;
+      if (ny < 0) ny += HH; else if (ny >= HH) ny -= HH;
+      X[i] = nx; Y[i] = ny;
+    }
+  }
+
+  function drawClusters() {
+    var ctx = cctx, S = CL.S, m, k;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = REDUCED ? '#050507' : 'rgba(5,5,7,0.24)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    for (m = 0; m < CL.M; m++) {
+      var list = CL.bySp[m]; ctx.fillStyle = COLS[m];
+      ctx.globalAlpha = 0.1; ctx.beginPath();
+      for (k = 0; k < list.length; k++) { var px = CL.x[list[k]] * S, py = CL.y[list[k]] * S; ctx.moveTo(px + 5.5, py); ctx.arc(px, py, 5.5, 0, TAU); }
+      ctx.fill();
+      ctx.globalAlpha = 0.9; ctx.beginPath();
+      for (k = 0; k < list.length; k++) { var qx = CL.x[list[k]] * S, qy = CL.y[list[k]] * S; ctx.moveTo(qx + 1.9, qy); ctx.arc(qx, qy, 1.9, 0, TAU); }
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  }
+
+  /* ---------------- Scene 3: Game of Life with two real spaceships ----------------
+     A formation of light-weight spaceships (LWSS) flies left to right. Every text square a ship touches
+     turns white and stays white. After a pause a formation of medium-weight spaceships (MWSS) follows
+     and every text square it touches goes dark again. The ships themselves are simulated with the real
+     Life rules; only the text squares are hardcoded. */
+  var SHIP_GPS = 26;   // Life generations per second. Lower = slower ships
+  var HOLD_S = 0.5;    // seconds between the writer finishing the text and the wiper launching
+  var PADX = 24;       // extra simulated columns past each side of the screen, so ships fly in and out cleanly
+  var LWSS = ['O..O.', '....O', 'O...O', '.OOOO'];                 // flies east, spans 5 rows over its cycle
+  var MWSS = ['..O...', 'O...O.', '.....O', 'O....O', '.OOOOO'];   // flies east, spans 7 rows over its cycle
+  var STAG = [0, 4, 2, 6];
+
+  var LF = { cell: 14, cols: 0, rows: 0, ox: 0, oy: 0, sw: 0, A: null, B: null, lit: null, al: null,
+    mi: null, mx: null, my: null, xs: null, ys: null, grid: null, ty0: 0, ty1: 0, tx0: 0, tx1: 0,
+    g: 0, acc: 0, startX: 0, gSpawnB: 0, gClear: 0, gEnd: 0, needReset: true };
+
+  function mkSim(sw, rows) { return { cur: new Uint8Array(sw * rows), nxt: new Uint8Array(sw * rows) }; }
+
+  function simGen(s) {
+    var sw = LF.sw, rows = LF.rows, cur = s.cur, nxt = s.nxt, x, y, i, n;
+    for (y = 1; y < rows - 1; y++) {
+      for (x = 1; x < sw - 1; x++) {
+        i = y * sw + x;
+        n = cur[i - sw - 1] + cur[i - sw] + cur[i - sw + 1] + cur[i - 1] + cur[i + 1] + cur[i + sw - 1] + cur[i + sw] + cur[i + sw + 1];
+        nxt[i] = (n === 3 || (n === 2 && cur[i] === 1)) ? 1 : 0;
+      }
+    }
+    s.cur = nxt; s.nxt = cur;
+  }
+
+  // A column of identical ships tall enough to sweep every row of the text. Gaps keep them from interacting.
+  function spawnFleet(sim, pat) {
+    var h = pat.length + 2, span = LF.ty1 - LF.ty0 + 3, n = Math.ceil(span / h);
+    var y0 = Math.round((LF.ty0 + LF.ty1) / 2 - n * h / 2) + 1;
+    for (var i = 0; i < n; i++) {
+      var ox = LF.startX + STAG[i % 4], oy = y0 + i * h;
+      for (var r = 0; r < pat.length; r++) {
+        for (var c = 0; c < pat[r].length; c++) {
+          if (pat[r].charAt(c) === 'O') {
+            var yy = oy + r, xx = ox + c;
+            if (yy > 0 && yy < LF.rows - 1) sim.cur[yy * LF.sw + xx] = 1;
+          }
+        }
+      }
+    }
+  }
+
+  function resetLife() {
+    LF.g = 0; LF.acc = 0; LF.needReset = false;
+    LF.A.cur.fill(0); LF.A.nxt.fill(0); LF.B.cur.fill(0); LF.B.nxt.fill(0);
+    LF.lit.fill(0); LF.al.fill(0);
+    spawnFleet(LF.A, LWSS);
+  }
+
+  function initLife(dpr) {
+    var cell = clamp(Math.round(W / 110), 6, 14);
+    var cols = 2 * Math.ceil((Math.ceil(W / cell) + 6) / 2), rows = 2 * Math.ceil((Math.ceil(H / cell) + 6) / 2);
+    LF.cell = cell; LF.cols = cols; LF.rows = rows; LF.sw = cols + 2 * PADX;
+    LF.ox = W / 2 - cols * cell / 2; LF.oy = H / 2 - rows * cell / 2;
+    LF.lit = new Uint8Array(cols * rows); LF.al = new Float32Array(cols * rows);
+    LF.A = mkSim(LF.sw, rows); LF.B = mkSim(LF.sw, rows);
+    LF.xs = new Int32Array(cols + 1); LF.ys = new Int32Array(rows + 1);
+    var i, j;
+    for (i = 0; i <= cols; i++) LF.xs[i] = Math.round(LF.ox + i * cell);
+    for (j = 0; j <= rows; j++) LF.ys[j] = Math.round(LF.oy + j * cell);
+
+    var g = document.createElement('canvas'); g.width = Math.round(W * dpr); g.height = Math.round(H * dpr);
+    var gx = g.getContext('2d'); gx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    gx.strokeStyle = 'rgba(255,255,255,0.2)'; gx.lineWidth = 1; gx.beginPath();
+    for (i = 0; i <= cols; i++) { var xx = LF.xs[i] + 0.5; if (xx < -1 || xx > W + 1) continue; gx.moveTo(xx, 0); gx.lineTo(xx, H); }
+    for (j = 0; j <= rows; j++) { var yy = LF.ys[j] + 0.5; if (yy < -1 || yy > H + 1) continue; gx.moveTo(0, yy); gx.lineTo(W, yy); }
+    gx.stroke();
+    LF.grid = g;
+
+    // Text mask: render the words 4x oversampled and average down to grid cells for cleaner letters.
+    var SS = 4, bw = cols * SS, bh = rows * SS;
+    var big = document.createElement('canvas'); big.width = bw; big.height = bh;
+    var bg = big.getContext('2d', { willReadFrequently: true });
+    bg.fillStyle = '#000'; bg.fillRect(0, 0, bw, bh);
+    bg.fillStyle = '#fff'; bg.textAlign = 'center'; bg.textBaseline = 'middle';
+    bg.font = '700 ' + (LAY.fs7 / cell * SS) + 'px ' + SANS;
+    var pc = LAY.pitch / cell * SS;
+    bg.fillText('Nothing is', bw / 2, bh / 2 - pc / 2);
+    bg.fillText('impossible', bw / 2, bh / 2 + pc / 2);
+    var bd = bg.getImageData(0, 0, bw, bh).data;
+    var mi = [], mxs = [], mys = [], x0 = cols, x1 = 0, y0 = rows, y1 = 0, yy2, xx2, sum;
+    for (j = 2; j < rows - 2; j++) {
+      for (i = 2; i < cols - 2; i++) {
+        sum = 0;
+        for (yy2 = 0; yy2 < SS; yy2++) for (xx2 = 0; xx2 < SS; xx2++) sum += bd[((j * SS + yy2) * bw + i * SS + xx2) * 4];
+        if (sum / (SS * SS) > 90) {
+          mi.push(j * cols + i); mxs.push(i); mys.push(j);
+          if (i < x0) x0 = i; if (i > x1) x1 = i; if (j < y0) y0 = j; if (j > y1) y1 = j;
+        }
+      }
+    }
+    LF.mi = mi; LF.mx = mxs; LF.my = mys; LF.ty0 = y0; LF.ty1 = y1; LF.tx0 = x0; LF.tx1 = x1;
+
+    // Hardcoded timeline, counted in Life generations (ships move 1 cell per 2 generations).
+    LF.startX = PADX - 12;
+    var tx1s = x1 + PADX;
+    var gEndA = 2 * (tx1s + 3 - LF.startX);                 // writer's tail has passed the last letter
+    LF.gSpawnB = gEndA + Math.round(HOLD_S * SHIP_GPS);
+    LF.gClear = 2 * (cols + PADX - LF.startX + 2);          // a formation has left the screen
+    LF.gEnd = LF.gSpawnB + LF.gClear + Math.round(1.0 * SHIP_GPS);
+    resetLife();
+  }
+
+  function updateHits() {
+    var A = LF.A.cur, B = LF.B.cur, sw = LF.sw, mi = LF.mi, mx = LF.mx, my = LF.my, lit = LF.lit;
+    for (var k = 0; k < mi.length; k++) {
+      var p = my[k] * sw + mx[k] + PADX;
+      if (A[p - sw - 1] | A[p - sw] | A[p - sw + 1] | A[p - 1] | A[p] | A[p + 1] | A[p + sw - 1] | A[p + sw] | A[p + sw + 1]) lit[mi[k]] = 1;
+      if (B[p - sw - 1] | B[p - sw] | B[p - sw + 1] | B[p - 1] | B[p] | B[p + 1] | B[p + sw - 1] | B[p + sw] | B[p + sw + 1]) lit[mi[k]] = 0;
+    }
+  }
+
+  function stepLife(dt) {
+    if (!LF.A) return;
+    if (REDUCED) { for (var q = 0; q < LF.mi.length; q++) LF.lit[LF.mi[q]] = 1; return; }
+    if (LF.needReset) resetLife();
+    LF.acc += dt * SHIP_GPS;
+    var guard = 0;
+    while (LF.acc >= 1 && guard++ < 3) {
+      LF.acc -= 1; LF.g++;
+      simGen(LF.A);
+      if (LF.g === LF.gSpawnB) spawnFleet(LF.B, MWSS);
+      if (LF.g >= LF.gSpawnB) simGen(LF.B);
+      if (LF.g === LF.gClear) LF.A.cur.fill(0);
+      if (LF.g === LF.gSpawnB + LF.gClear) LF.B.cur.fill(0);
+      if (LF.g >= LF.gEnd) { resetLife(); break; }
+    }
+    updateHits();
+  }
+
+  function drawLife() {
+    var ctx = lctx, cols = LF.cols, rows = LF.rows, al = LF.al, lit = LF.lit, A = LF.A.cur, B = LF.B.cur, sw = LF.sw;
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(LF.grid, 0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    for (var y = 0; y < rows; y++) {
+      var ya = LF.ys[y], h = LF.ys[y + 1] - ya + 1;
+      if (ya > H || ya + h < 0) continue;
+      for (var x = 0; x < cols; x++) {
+        var i = y * cols + x, s = y * sw + x + PADX, a = al[i], tg = lit[i];
+        if (a !== tg) { a += (tg - a) * 0.45; if (Math.abs(a - tg) < 0.02) a = tg; al[i] = a; }
+        // ship cells switch on and off instantly (no trail); text squares fade quickly
+        var v = (A[s] | B[s]) ? 1 : a;
+        if (v > 0.02) {
+          var xa = LF.xs[x];
+          if (xa > W || xa + 40 < 0) continue;
+          ctx.globalAlpha = v; ctx.fillRect(xa, ya, LF.xs[x + 1] - xa + 1, h);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------------- Scroll choreography ---------------- */
+  var CAPS = { 1: 'Boids · Craig Reynolds', 2: 'Clusters · Jeffrey Ventrella', 3: 'Life · John Conway' };
+  function prog(t) { t = clamp(t, 0, 1); return t * 0.4 + (t * t * (3 - 2 * t)) * 0.6; }
+
+  function applyScroll() {
+    var r = runway.getBoundingClientRect(), U = (runway.offsetHeight / 4) || 1, s = -r.top / U;
+    inView = r.bottom > 0;
+    p1 = prog((s - 0.3) / 0.9); p2 = prog((s - 1.7) / 0.9);
+    s1.style.clipPath = 'inset(0 0 ' + (p1 * 100).toFixed(3) + '% 0)';
+    s2.style.clipPath = 'inset(0 0 ' + (p2 * 100).toFixed(3) + '% 0)';
+    var e1y = H * (1 - p1), e2y = H * (1 - p2);
+    e1.style.transform = 'translateY(' + e1y.toFixed(1) + 'px)';
+    e2.style.transform = 'translateY(' + e2y.toFixed(1) + 'px)';
+    e1.style.opacity = Math.min(1, p1 * 10, (1 - p1) * 10).toFixed(2);
+    e2.style.opacity = Math.min(1, p2 * 10, (1 - p2) * 10).toFixed(2);
+    var hy = 34, hs = hy < e1y ? 1 : (hy < e2y ? 2 : 3);
+    if (hdr.dataset.scene !== String(hs)) hdr.dataset.scene = String(hs);
+    hdr.style.setProperty('--glass-o', clamp(window.scrollY / 160, 0, 1).toFixed(2));
+    var by = H - 26, cs = by < e1y ? 1 : (by < e2y ? 2 : 3);
+    if (cap.dataset.scene !== String(cs)) {
+      cap.dataset.scene = String(cs); cap.textContent = CAPS[cs];
+      cap.classList.remove('swap'); void cap.offsetWidth; cap.classList.add('swap');
+    }
+    cvB.style.opacity = (1 - clamp((p1 - 0.45) / 0.5, 0, 1)).toFixed(3);
+  }
+
+  /* ---------------- Boot, loop, resize ---------------- */
+  function layoutAll() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    if (!W || !H) return;
+    computeLayout(); layoutSerif();
+    fit(cvB, bctx, 2); fit(tcv, tctx, 2); fit(cvC, cctx, 1.5);
+    var dl = fit(cvL, lctx, 2);
+    initBoids(); initClusters(); initLife(dl);
+    applyScroll();
+  }
+
+  var last = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    applyScroll();
+    if (inView) {
+      if (p1 < 0.96) { stepBoids(dt); drawBoids(); }
+      var c2 = p1 > 0.002 && p2 < 0.998;
+      if (c2) {
+        if (!REDUCED) stepClusters();
+        else if (CL.warm < 1) { for (var q = 0; q < 300; q++) stepClusters(); CL.warm = 1; }
+        drawClusters();
+      } else if (!REDUCED && CL.warm < 260 && CL.n) {
+        for (var w = 0; w < 8; w++) stepClusters();
+        CL.warm += 8;
+      }
+      if (p2 > 0.002) { stepLife(dt); drawLife(); }
+      else if (LF.A) LF.needReset = true;   // ships restart from the left edge each time the scene is revealed
+    }
+    requestAnimationFrame(frame);
+  }
+
+  layoutAll();
+  var fl = ['800 40px Sora', '700 40px Sora', 'italic 300 40px "Cormorant Garamond"'];
+  function ready() { if (fontsReady) return; fontsReady = true; layoutAll(); }
+  if (document.fonts && document.fonts.load) {
+    Promise.all(fl.map(function (f) { return document.fonts.load(f); })).then(ready, ready);
+    setTimeout(ready, 3000);
+  } else { fontsReady = true; }
+  requestAnimationFrame(frame);
+
+  var rt = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      var nw = stage.clientWidth, nh = stage.clientHeight;
+      if (nw !== W || Math.abs(nh - H) > 140) layoutAll(); else H = nh || H;
+    }, 160);
+  });
+})();
+</script>
