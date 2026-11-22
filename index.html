@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ashutosh Bhonsle</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Portfolio of Ashutosh Bhonsle. Nothing is impossible.">
@@ -196,7 +197,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
       <div class="edge" id="e2"></div>
       <div class="edge" id="e1"></div>
       <canvas class="boidlayer" id="boids"></canvas>
-      <div class="cap" id="cap" data-scene="1"><span class="cap-t" id="capT">Boids · Craig Reynolds</span><span class="cap-d" id="capD">The birds follow three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.</span></div>
+      <div class="cap" id="cap" data-scene="1"><span class="cap-t" id="capT">Boids · Craig Reynolds</span><span class="cap-d" id="capD">A model of flocking. Each bird-like agent follows three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.</span></div>
     </div>
   </div>
 </main>
@@ -981,9 +982,9 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
 
   /* ---------------- Scroll choreography ---------------- */
   var CAPS = {
-    1: ['Boids · Craig Reynolds', 'The birds follow three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.'],
-    2: ['Clusters · Jeffrey Ventrella', 'Particles of different kinds attract or repel each other by simple rules, and lifelike, self-organising structures emerge. Take a break and watch for a while.'],
-    3: ['Life · John Conway', 'A cellular automaton. Every cell on a grid lives or dies by counting its neighbours, and from this one rule moving creatures and spaceships emerge.']
+    1: ['Boids · Craig Reynolds', 'A model of flocking. Each bird-like agent follows three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.'],
+    2: ['Clusters · Jeffrey Ventrella', 'A particle ecosystem. Particles of different kinds attract or repel each other by simple rules, and lifelike, self-organising structures emerge.'],
+    3: ['Life · John Conway', 'A cellular automaton. Every cell on a grid lives or dies by counting its neighbours, and from this one rule moving patterns and “spaceships” emerge.']
   };
   function prog(t) { t = clamp(t, 0, 1); return t * 0.4 + (t * t * (3 - 2 * t)) * 0.6; }
 
