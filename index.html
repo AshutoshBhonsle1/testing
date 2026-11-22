@@ -297,7 +297,8 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
      Swarm positions and headings are random at the start and at every exit. While the words are up EVERY boid
      is inside them, flying fast, bouncing off the letter outlines and leaving a short light trail. */
   var EXIT_AT = 0.5;     // the words dissolve once the next scene is this far (0..1) onto the screen
-  var GAP_T = 5.0;       // seconds the two swarms fly free before the words form again (also before the first time)
+  var GAP_T = 5.0;       // seconds the two swarms fly free before the words form again
+  var FIRST_T = 2.0;     // seconds before the very first formation after the page loads
   var EASE_IN_T = 0.9;   // boids start their swoop spread over this long (eased in: few at first, then many)
   var DISSOLVE_T = 1.0;  // the words thin out over this long (eased out: fast at first, then trailing off)
 
@@ -317,14 +318,14 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     for (var k = 0; k < 2; k++) { BO.LVX[k] = Math.cos(BO.LA[k]) * sp; BO.LVY[k] = Math.sin(BO.LA[k]) * sp; }
   }
   function initLeaders() {
-    var mxg = W * 0.2, myg = H * 0.22, dmin = Math.min(W, H) * 0.45, ax = 0, ay = 0, bx = 0, by = 0;
-    for (var t = 0; t < 30; t++) {
-      ax = mxg + Math.random() * (W - 2 * mxg); ay = myg + Math.random() * (H - 2 * myg);
-      bx = mxg + Math.random() * (W - 2 * mxg); by = myg + Math.random() * (H - 2 * myg);
-      if (Math.hypot(ax - bx, ay - by) >= dmin) break;
-    }
-    BO.LX[0] = ax; BO.LY[0] = ay; BO.LX[1] = bx; BO.LY[1] = by;
-    BO.LA[0] = Math.random() * TAU; BO.LA[1] = BO.LA[0] + 1.2 + Math.random() * (TAU - 2.4);
+    // Start the two swarms well apart on opposite sides of the screen (left/right on wide screens, top/bottom on
+    // tall ones), on a random side each, with random headings.
+    var lo = 0.17 + Math.random() * 0.1, hi = 0.73 + Math.random() * 0.1;
+    var c0 = 0.3 + Math.random() * 0.4, c1 = 0.3 + Math.random() * 0.4;
+    if (Math.random() < 0.5) { var sw = lo; lo = hi; hi = sw; }
+    if (W >= H) { BO.LX[0] = W * lo; BO.LY[0] = H * c0; BO.LX[1] = W * hi; BO.LY[1] = H * c1; }
+    else { BO.LX[0] = W * c0; BO.LY[0] = H * lo; BO.LX[1] = W * c1; BO.LY[1] = H * hi; }
+    BO.LA[0] = Math.random() * TAU; BO.LA[1] = Math.random() * TAU;
     BO.LW[0] = BO.LW[1] = 0;
     setLeaderVel(3.6 * BO.u);
   }
@@ -408,8 +409,12 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     initLeaders();
     for (var i = 0; i < N; i++) {
       var g = i & 1, sp = (3 + Math.random() * 2) * u; BO.grp[i] = g;
-      BO.x[i] = clamp(BO.LX[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280, 1, W - 2);
-      BO.y[i] = clamp(BO.LY[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280, 1, H - 2);
+      var px0 = 0, py0 = 0, tr = 0;
+      do {
+        px0 = BO.LX[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280;
+        py0 = BO.LY[g] + (Math.random() + Math.random() + Math.random() - 1.5) * 280;
+      } while ((px0 < 1 || px0 > W - 2 || py0 < 1 || py0 > H - 2) && ++tr < 8);
+      BO.x[i] = clamp(px0, 1, W - 2); BO.y[i] = clamp(py0, 1, H - 2);
       var a = Math.atan2(BO.LVY[g], BO.LVX[g]) + (Math.random() - 0.5) * 0.8;
       BO.vx[i] = Math.cos(a) * sp; BO.vy[i] = Math.sin(a) * sp;
     }
@@ -501,7 +506,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     // hardcoded timeline
     if (BO.ev === 0) {
       if (!BO.started) {
-        if (fontsReady && t > 0.4 && BO.M > 0) { BO.started = true; BO.nextPull = t + GAP_T; }
+        if (fontsReady && t > 0.4 && BO.M > 0) { BO.started = true; BO.nextPull = t + FIRST_T; }
       } else if (t >= BO.nextPull) {
         if (p1 < 0.3 && BO.M > 0) { BO.ev = 1; BO.dis = false; BO.tPull = t; assignTargets(); }
         else BO.nextPull = t + 0.5;
