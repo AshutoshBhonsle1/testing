@@ -111,12 +111,14 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
 
 .cap {
   position: absolute; z-index: 6; bottom: 20px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
-  font-weight: 500; color: var(--ink); transition: color 0.3s ease;
+  font-weight: 600; color: var(--ink); transition: color 0.3s ease;
+  max-width: min(460px, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 5px;
 }
-.cap { --ink: var(--umber); left: max(16px, env(safe-area-inset-left, 0px)); opacity: 0.7; }
+.cap { --ink: var(--umber); left: max(16px, env(safe-area-inset-left, 0px)); opacity: 1; }
+.cap-d { font-size: 12.5px; line-height: 1.45; letter-spacing: 0.01em; text-transform: none; font-weight: 500; opacity: 0.88; }
 .cap[data-scene="2"], .cap[data-scene="3"] { --ink: var(--paper); }
 .cap.swap { animation: capIn 0.5s ease both; }
-@keyframes capIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 0.7; transform: none; } }
+@keyframes capIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 /* ---------- Footer ---------- */
 .foot {
@@ -194,7 +196,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
       <div class="edge" id="e2"></div>
       <div class="edge" id="e1"></div>
       <canvas class="boidlayer" id="boids"></canvas>
-      <div class="cap" id="cap" data-scene="1">Boids · Craig Reynolds</div>
+      <div class="cap" id="cap" data-scene="1"><span class="cap-t" id="capT">Boids · Craig Reynolds</span><span class="cap-d" id="capD">The birds follow three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.</span></div>
     </div>
   </div>
 </main>
@@ -239,7 +241,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   var SERIF = "'Cormorant Garamond','Iowan Old Style',Georgia,serif";
 
   var runway = $('runway'), stage = $('stage'), s1 = $('s1'), s2 = $('s2'), s3 = $('s3');
-  var e1 = $('e1'), e2 = $('e2'), hdr = $('hdr'), cap = $('cap');
+  var e1 = $('e1'), e2 = $('e2'), hdr = $('hdr'), cap = $('cap'), capT = $('capT'), capD = $('capD');
   var serA = $('serA'), serB = $('serB');
   var cvB = $('boids'), cvC = $('clusters'), cvL = $('life');
   var bctx = cvB.getContext('2d'), cctx = cvC.getContext('2d'), lctx = cvL.getContext('2d');
@@ -286,14 +288,14 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
 
   /* ---------------- Scene 1: two leader-led swarms that swoop into the words ----------------
      Hardcoded rhythm: the swarms fly free for GAP_T seconds, then the boids start their swoop one by one
-     (eased in: a trickle at first, then more and more) until the words are formed. The words stay for HOLD_T
-     seconds, then dissolve (eased out) into exactly two swarms that head off in random directions.
+     (eased in: a trickle at first, then more and more) until the words are formed. The words stay up until the
+     user has scrolled halfway onto the next scene (p1 >= EXIT_AT), then dissolve (eased out) into exactly two
+     swarms that head off in random directions.
      Swarm positions and headings are random at the start and at every exit. While the words are up EVERY boid
      is inside them, flying fast, bouncing off the letter outlines and leaving a short light trail. */
-  var HOLD_T = 3.0;      // seconds the words stay formed
+  var EXIT_AT = 0.5;     // the words dissolve once the next scene is this far (0..1) onto the screen
   var GAP_T = 5.0;       // seconds the two swarms fly free before the words form again (also before the first time)
   var EASE_IN_T = 0.9;   // boids start their swoop spread over this long (eased in: few at first, then many)
-  var LEAD_T = 1.8;      // from the first boid starting its swoop until the words are fully formed
   var DISSOLVE_T = 1.0;  // the words thin out over this long (eased out: fast at first, then trailing off)
 
   var BO = { N: 0, u: 1, x: null, y: null, vx: null, vy: null, tx: null, ty: null, mode: null, relAt: null,
@@ -502,7 +504,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
         else BO.nextPull = t + 0.5;
       }
     } else if (BO.ev === 1) {
-      if (t - BO.tPull >= LEAD_T + HOLD_T) releaseBoids();
+      if (p1 >= EXIT_AT) releaseBoids();
     }
     if (BO.dis && t > BO.tRel + DISSOLVE_T + 0.05) BO.dis = false;
 
@@ -744,20 +746,27 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   }
 
   /* ---------------- Scene 3: Game of Life with two real spaceships ----------------
-     A formation of light-weight spaceships (LWSS) flies left to right. Every text square a ship touches
-     turns white and stays white. After a pause a formation of medium-weight spaceships (MWSS) follows
-     and every text square it touches goes dark again. The ships themselves are simulated with the real
-     Life rules; only the text squares are hardcoded. */
+     The scene opens with the text already on screen. Once the user has scrolled halfway onto the scene, a
+     formation of medium-weight spaceships (MWSS) flies in and every text square it touches goes dark. From then
+     on the cycle repeats: a formation of light-weight spaceships (LWSS) writes the text (every square it touches
+     turns white and stays white), then an MWSS formation follows and erases it. The ships themselves are
+     simulated with the real Life rules; only the text squares are hardcoded. */
   var SHIP_GPS = 26;   // Life generations per second. Lower = slower ships
+  var START_AT = 0.5;  // the wiper ships start entering once the scene is this far (0..1) onto the screen
   var HOLD_S = 0.5;    // seconds between the writer finishing the text and the wiper launching
   var PADX = 24;       // extra simulated columns past each side of the screen, so ships fly in and out cleanly
   var LWSS = ['O..O.', '....O', 'O...O', '.OOOO'];                 // flies east, spans 5 rows over its cycle
   var MWSS = ['..O...', 'O...O.', '.....O', 'O....O', '.OOOOO'];   // flies east, spans 7 rows over its cycle
   var STAG = [0, 4, 2, 6];
+  // Small oscillators ("pulsing patterns") the wiper ships leave in their wake. They run on the real Life rules
+  // (blinkers, toads, beacons all have period 2); only their placement is hardcoded. The writer ships clean them up.
+  var OSC = [['OOO'], ['.OOO', 'OOO.'], ['OO..', 'OO..', '..OO', '..OO']];
+  var OSC_W = [0.4, 0.3, 0.3];
 
   var LF = { cell: 14, cols: 0, rows: 0, ox: 0, oy: 0, sw: 0, A: null, B: null, lit: null, al: null,
     mi: null, mx: null, my: null, xs: null, ys: null, grid: null, ty0: 0, ty1: 0, tx0: 0, tx1: 0,
-    g: 0, acc: 0, startX: 0, gSpawnB: 0, gClear: 0, gEnd: 0, needReset: true };
+    g: 0, acc: 0, startX: 0, gSpawnB: 0, gClear: 0, gEnd: 0, needReset: true, go: false, intro: true,
+    D: null, mk: null, plan: [], live: [], pass: 0 };
 
   function mkSim(sw, rows) { return { cur: new Uint8Array(sw * rows), nxt: new Uint8Array(sw * rows) }; }
 
@@ -790,11 +799,71 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     }
   }
 
-  function resetLife() {
-    LF.g = 0; LF.acc = 0; LF.needReset = false;
+  function stampOsc(o, v) {
+    var pat = OSC[o.t];
+    for (var r = 0; r < pat.length; r++) for (var c = 0; c < pat[r].length; c++) {
+      if (pat[r].charAt(c) === 'O') LF.D.cur[(o.y + r) * LF.sw + o.x + PADX + c] = v;
+    }
+  }
+  // Pick spots for the debris of one wiper pass. Rows are limited to what the ships actually sweep. Spots between
+  // the letters are preferred; if too few are free, the rest may overlap text squares so that EVERY pass leaves debris.
+  function planDebris() {
+    var cols = LF.cols, rows = LF.rows, out = [], tries, k, all = LF.live;
+    var K = Math.max(7, Math.round(cols / 5)), MINK = Math.max(5, Math.round(cols / 10));
+    var hh = MWSS.length + 2, n = Math.ceil((LF.ty1 - LF.ty0 + 3) / hh);
+    var cy0 = Math.max(3, Math.round((LF.ty0 + LF.ty1) / 2 - n * hh / 2) + 1), cy1 = Math.min(rows - 4, cy0 + n * hh - 1);
+    for (tries = 0; tries < 900 && out.length < K; tries++) {
+      var strict = tries < 500 || out.length >= MINK;
+      var r = Math.random(), t = r < OSC_W[0] ? 0 : (r < OSC_W[0] + OSC_W[1] ? 1 : 2), pat = OSC[t];
+      var w = pat[0].length, h = pat.length;
+      var x = 3 + Math.floor(Math.random() * (cols - 6 - w)), y = cy0 + Math.floor(Math.random() * Math.max(1, cy1 - cy0 - h));
+      var ok = true, xx, yy;
+      if (strict) {
+        for (yy = y - 1; ok && yy <= y + h; yy++) for (xx = x - 1; xx <= x + w; xx++) {
+          if (yy >= 0 && yy < rows && LF.mk[yy * cols + xx]) { ok = false; break; }
+        }
+      }
+      for (k = 0; ok && k < out.length; k++) if (Math.abs(out[k].x - x) < 8 && Math.abs(out[k].y - y) < 7) ok = false;
+      for (k = 0; ok && k < all.length; k++) if (Math.abs(all[k].x - x) < 8 && Math.abs(all[k].y - y) < 7) ok = false;
+      if (ok) out.push({ t: t, x: x, y: y, w: w, h: h });
+    }
+    out.sort(function (a, b) { return a.x - b.x; });
+    LF.plan = out;
+  }
+  // Wiper pass: once the tail of the formation has gone past a pattern's column, the pattern appears behind it.
+  function spawnDebris(gB) {
+    var tail = LF.startX + gB / 2, p = LF.plan;
+    while (p.length && tail >= p[0].x + PADX + p[0].w / 2 + 3) { var o = p.shift(); o.pass = LF.pass; stampOsc(o, 1); LF.live.push(o); }
+  }
+  // Writer pass: a pattern is swept away when the front of the formation reaches its column.
+  function cleanDebris(gA) {
+    var front = LF.startX + 8 + gA / 2, L = LF.live;
+    for (var i = L.length - 1; i >= 0; i--) {
+      var o = L[i];
+      if (o.pass !== LF.pass && front >= o.x + PADX + o.w / 2) {
+        for (var yy = o.y - 1; yy <= o.y + o.h; yy++) for (var xx = o.x - 1; xx <= o.x + o.w; xx++) LF.D.cur[yy * LF.sw + xx + PADX] = 0;
+        L.splice(i, 1);
+      }
+    }
+  }
+
+  // Intro (first pass after the scene is revealed): every text square is already white and a formation of wiper
+  // ships (MWSS) is parked just off the left edge. It only starts flying once the user has scrolled START_AT of
+  // the way onto the scene. After that the normal cycle runs forever: writer ships (LWSS) light the text, then
+  // wiper ships (MWSS) erase it again.
+  function resetLife(intro) {
+    LF.g = 0; LF.acc = 0; LF.needReset = false; LF.intro = intro; LF.pass++;
+    LF.go = !intro;   // only the intro waits for the scroll
     LF.A.cur.fill(0); LF.A.nxt.fill(0); LF.B.cur.fill(0); LF.B.nxt.fill(0);
     LF.lit.fill(0); LF.al.fill(0);
-    spawnFleet(LF.A, LWSS);
+    if (intro) {
+      LF.D.cur.fill(0); LF.D.nxt.fill(0); LF.live.length = 0;
+      for (var k = 0; k < LF.mi.length; k++) { LF.lit[LF.mi[k]] = 1; LF.al[LF.mi[k]] = 1; }
+      spawnFleet(LF.B, MWSS);
+      planDebris();
+    } else {
+      spawnFleet(LF.A, LWSS);
+    }
   }
 
   function initLife(dpr) {
@@ -803,7 +872,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     LF.cell = cell; LF.cols = cols; LF.rows = rows; LF.sw = cols + 2 * PADX;
     LF.ox = W / 2 - cols * cell / 2; LF.oy = H / 2 - rows * cell / 2;
     LF.lit = new Uint8Array(cols * rows); LF.al = new Float32Array(cols * rows);
-    LF.A = mkSim(LF.sw, rows); LF.B = mkSim(LF.sw, rows);
+    LF.A = mkSim(LF.sw, rows); LF.B = mkSim(LF.sw, rows); LF.D = mkSim(LF.sw, rows);
     LF.xs = new Int32Array(cols + 1); LF.ys = new Int32Array(rows + 1);
     var i, j;
     for (i = 0; i <= cols; i++) LF.xs[i] = Math.round(LF.ox + i * cell);
@@ -839,6 +908,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
         }
       }
     }
+    LF.mk = new Uint8Array(cols * rows); for (var q = 0; q < mi.length; q++) LF.mk[mi[q]] = 1;
     LF.mi = mi; LF.mx = mxs; LF.my = mys; LF.ty0 = y0; LF.ty1 = y1; LF.tx0 = x0; LF.tx1 = x1;
 
     // Hardcoded timeline, counted in Life generations (ships move 1 cell per 2 generations).
@@ -848,7 +918,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     LF.gSpawnB = gEndA + Math.round(HOLD_S * SHIP_GPS);
     LF.gClear = 2 * (cols + PADX - LF.startX + 2);          // a formation has left the screen
     LF.gEnd = LF.gSpawnB + LF.gClear + Math.round(1.0 * SHIP_GPS);
-    resetLife();
+    resetLife(true);
   }
 
   function updateHits() {
@@ -863,23 +933,31 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   function stepLife(dt) {
     if (!LF.A) return;
     if (REDUCED) { for (var q = 0; q < LF.mi.length; q++) LF.lit[LF.mi[q]] = 1; return; }
-    if (LF.needReset) resetLife();
+    if (LF.needReset) resetLife(true);
+    if (!LF.go) { if (p2 >= START_AT) LF.go = true; else return; }   // intro: text on screen, ships wait off-screen
     LF.acc += dt * SHIP_GPS;
     var guard = 0;
     while (LF.acc >= 1 && guard++ < 3) {
       LF.acc -= 1; LF.g++;
-      simGen(LF.A);
-      if (LF.g === LF.gSpawnB) spawnFleet(LF.B, MWSS);
-      if (LF.g >= LF.gSpawnB) simGen(LF.B);
-      if (LF.g === LF.gClear) LF.A.cur.fill(0);
-      if (LF.g === LF.gSpawnB + LF.gClear) LF.B.cur.fill(0);
-      if (LF.g >= LF.gEnd) { resetLife(); break; }
+      simGen(LF.D);
+      if (LF.intro) {
+        simGen(LF.B); spawnDebris(LF.g);
+        if (LF.g === LF.gClear) LF.B.cur.fill(0);
+        if (LF.g >= LF.gClear + Math.round(1.0 * SHIP_GPS)) { resetLife(false); break; }
+      } else {
+        simGen(LF.A); cleanDebris(LF.g);
+        if (LF.g === LF.gSpawnB) { spawnFleet(LF.B, MWSS); planDebris(); }
+        if (LF.g >= LF.gSpawnB) { simGen(LF.B); spawnDebris(LF.g - LF.gSpawnB); }
+        if (LF.g === LF.gClear) LF.A.cur.fill(0);
+        if (LF.g === LF.gSpawnB + LF.gClear) LF.B.cur.fill(0);
+        if (LF.g >= LF.gEnd) { resetLife(false); break; }
+      }
     }
     updateHits();
   }
 
   function drawLife() {
-    var ctx = lctx, cols = LF.cols, rows = LF.rows, al = LF.al, lit = LF.lit, A = LF.A.cur, B = LF.B.cur, sw = LF.sw;
+    var ctx = lctx, cols = LF.cols, rows = LF.rows, al = LF.al, lit = LF.lit, A = LF.A.cur, B = LF.B.cur, D = LF.D.cur, sw = LF.sw;
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(LF.grid, 0, 0, W, H);
     ctx.fillStyle = '#ffffff';
@@ -890,7 +968,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
         var i = y * cols + x, s = y * sw + x + PADX, a = al[i], tg = lit[i];
         if (a !== tg) { a += (tg - a) * 0.45; if (Math.abs(a - tg) < 0.02) a = tg; al[i] = a; }
         // ship cells switch on and off instantly (no trail); text squares fade quickly
-        var v = (A[s] | B[s]) ? 1 : a;
+        var v = (A[s] | B[s] | D[s]) ? 1 : a;
         if (v > 0.02) {
           var xa = LF.xs[x];
           if (xa > W || xa + 40 < 0) continue;
@@ -902,7 +980,11 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
   }
 
   /* ---------------- Scroll choreography ---------------- */
-  var CAPS = { 1: 'Boids · Craig Reynolds', 2: 'Clusters · Jeffrey Ventrella', 3: 'Life · John Conway' };
+  var CAPS = {
+    1: ['Boids · Craig Reynolds', 'The birds follow three simple local rules: stay close, match your neighbours’ heading, avoid collisions. Flocks emerge without a leader.'],
+    2: ['Clusters · Jeffrey Ventrella', 'A particle ecosystem. Particles of different kinds attract or repel each other by simple rules, and lifelike, self-organising structures emerge.'],
+    3: ['Life · John Conway', 'A cellular automaton. Every cell on a grid lives or dies by counting its neighbours, and from this one rule moving creatuers and spaceships emerge.']
+  };
   function prog(t) { t = clamp(t, 0, 1); return t * 0.4 + (t * t * (3 - 2 * t)) * 0.6; }
 
   function applyScroll() {
@@ -921,10 +1003,10 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-r
     hdr.style.setProperty('--glass-o', clamp(window.scrollY / 160, 0, 1).toFixed(2));
     var by = H - 26, cs = by < e1y ? 1 : (by < e2y ? 2 : 3);
     if (cap.dataset.scene !== String(cs)) {
-      cap.dataset.scene = String(cs); cap.textContent = CAPS[cs];
+      cap.dataset.scene = String(cs); capT.textContent = CAPS[cs][0]; capD.textContent = CAPS[cs][1];
       cap.classList.remove('swap'); void cap.offsetWidth; cap.classList.add('swap');
     }
-    cvB.style.opacity = (1 - clamp((p1 - 0.45) / 0.5, 0, 1)).toFixed(3);
+    cvB.style.opacity = (1 - clamp((p1 - 0.85) / 0.15, 0, 1)).toFixed(3);
   }
 
   /* ---------------- Boot, loop, resize ---------------- */
